@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: stable
+  labels:
+    app: demo
+  annotations:
+    nginx.ingress.kubernetes.io/affinity: "cookie" # enable the sticky session 
+    nginx.ingress.kubernetes.io/session-cookie-name: "sticky-cookie" # the name of the cookie (default: INGRESSCOOKIE)
+    nginx.ingress.kubernetes.io/session-cookie-max-age: "3600" # the time before the cookie expires (in seconds)
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: demo.local
+      http:
+        paths:
+        - path: "/"
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: demo-v1 
+              port:
+                name: http

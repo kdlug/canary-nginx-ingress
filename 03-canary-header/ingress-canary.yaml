@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary
+  labels:
+    app: demo
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10" # optional in this scenario, we can use both canary strategies by weight and cookie at the same time
+    nginx.ingress.kubernetes.io/canary-by-header: "x-region"
+    nginx.ingress.kubernetes.io/canary-by-header-value: "us-east"
+spec:
+  #ingressClassName: nginx 
+  rules:
+    - host: demo.local
+      http:
+        paths:
+        - path: "/"
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: demo-v2
+              port:
+                name: http

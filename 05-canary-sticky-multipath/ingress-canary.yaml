@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: canary
+  labels:
+    app: demo
+  annotations:
+    nginx.ingress.kubernetes.io/canary: "true"
+    nginx.ingress.kubernetes.io/canary-weight: "10"
+    nginx.ingress.kubernetes.io/canary-by-cookie: "canary-cookie"
+spec:
+  ingressClassName: nginx 
+  rules:
+    - host: demo.local
+      http:
+        paths:
+        - path: "/"
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: demo-v2
+              port:
+                name: http
+        - path: "/echo"
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: demo-v2
+              port:
+                name: http
